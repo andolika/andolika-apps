@@ -1,0 +1,13 @@
+# Arch Linux builder: the .pkg.tar.zst for Arch and its derivatives (Manjaro,
+# EndeavourOS, CachyOS). Vanilla Arch, so the compiler targets the x86-64 baseline
+# rather than whatever the build machine's makepkg.conf asks for.
+FROM docker.io/library/archlinux:latest
+RUN pacman -Syu --noconfirm --needed base-devel clang curl git \
+      gtk4 libadwaita gtksourceview5 libspelling webkitgtk-6.0 poppler-glib libheif \
+      gstreamer gst-plugins-base-libs alsa-lib \
+ && pacman -Scc --noconfirm
+ARG RUST=1.97.1
+ENV RUSTUP_HOME=/opt/rustup CARGO_HOME=/opt/cargo PATH=/opt/cargo/bin:$PATH
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain $RUST
+# makepkg refuses to run as root.
+RUN useradd -m builder

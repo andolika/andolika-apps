@@ -1,0 +1,13 @@
+# Debian 13 builder: the .deb for Debian 13 and later and Ubuntu 25.04 and later.
+# Built against the oldest of those (glibc 2.41, GTK 4.18, libadwaita 1.7), so the
+# binary asks for nothing newer than any of them has.
+FROM docker.io/library/debian:13
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      build-essential clang libclang-dev pkg-config curl ca-certificates git dpkg-dev file \
+      libgtk-4-dev libadwaita-1-dev libgtksourceview-5-dev libspelling-1-dev libwebkitgtk-6.0-dev \
+      libpoppler-glib-dev libheif-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+      libasound2-dev \
+ && rm -rf /var/lib/apt/lists/*
+ARG RUST=1.97.1
+ENV RUSTUP_HOME=/opt/rustup CARGO_HOME=/opt/cargo PATH=/opt/cargo/bin:$PATH
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain $RUST

@@ -1,0 +1,11 @@
+# Fedora 42 builder: the .rpm for Fedora 42 and later and other RPM distributions with
+# GTK 4.18 and libadwaita 1.7. rpmbuild reads the libraries' sonames for Requires.
+FROM registry.fedoraproject.org/fedora:42
+RUN dnf -y install gcc gcc-c++ make clang clang-devel pkgconf-pkg-config curl git rpm-build file \
+      gtk4-devel libadwaita-devel gtksourceview5-devel libspelling-devel webkitgtk6.0-devel \
+      poppler-glib-devel libheif-devel gstreamer1-devel gstreamer1-plugins-base-devel \
+      alsa-lib-devel \
+ && dnf clean all
+ARG RUST=1.97.1
+ENV RUSTUP_HOME=/opt/rustup CARGO_HOME=/opt/cargo PATH=/opt/cargo/bin:$PATH
+RUN curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain $RUST
